@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACNET Family</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #17212b;
+    }
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: white;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 24px 20px;
+    }
+
+    header h1 {
+      font-size: 27px;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .status {
+      margin: 18px;
+      padding: 15px;
+      background: #ecfdf5;
+      border-radius: 12px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .status strong {
+      color: #047857;
+    }
+
+    .section {
+      padding: 0 18px 18px;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .member {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .member-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .member-name {
+      font-weight: bold;
+    }
+
+    .location {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .live {
+      color: #059669;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    button {
+      border: none;
+      padding: 17px 10px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .map-btn {
+      background: #111827;
+      color: white;
+    }
+
+    .safe-btn {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .sos {
+      margin: 0 18px 24px;
+      width: calc(100% - 36px);
+      background: #dc2626;
+      color: white;
+      font-size: 20px;
+      padding: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>TACNET FAMILY</h1>
+    <p>Your family. One connected safety network.</p>
+  </header>
+
+  <div class="status">
+    🟢 <strong>Family Network Active</strong><br>
+    <span style="font-size:13px;">
+      Your family safety network is connected.
+    </span>
+  </div>
+
+  <div class="section">
+    <h2>Your Family</h2>
+
+    <div class="member">
+      <div class="member-info">
+        <div class="avatar">J</div>
+        <div>
+          <div class="member-name">Jack</div>
+          <div class="location">School</div>
+        </div>
+      </div>
+      <div class="live">● LIVE</div>
+    </div>
+
+    <div class="member">
+      <div class="member-info">
+        <div class="avatar">S</div>
+        <div>
+          <div class="member-name">Sarah</div>
+          <div class="location">Home</div>
+        </div>
+      </div>
+      <div class="live">● LIVE</div>
+    </div>
+
+    <div class="member">
+      <div class="member-info">
+        <div class="avatar">M</div>
+        <div>
+          <div class="member-name">Mom</div>
+          <div class="location">Work</div>
+        </div>
+      </div>
+      <div class="live">● LIVE</div>
+    </div>
+
+  </div>
+
+  <div class="buttons">
+    <button class="map-btn" onclick="showMessage('Family Live Map')">
+      🌎 Family Live Map
+    </button>
+
+    <button class="safe-btn" onclick="showMessage('Safe Zones')">
+      🏠 Safe Zones
+    </button>
+  </div>
+
+  <button class="sos" onclick="showSOS()">
+    🔴 FAMILY SOS
+  </button>
+
+  <footer>
+    TACNET Family<br>
+    Connected family safety technology
+  </footer>
+
+</div>
+
+<script>
+  function showMessage(message) {
+    alert(message + " — Coming Soon");
+  }
+
+  function showSOS() {
+    alert(
+      "TACNET FAMILY SOS\n\n" +
+      "This demonstration will activate the family emergency system.\n\n" +
+      "REAL SOS functionality will be connected in a future version."
+    );
+  }
+</script>
+
+</body>
+</html>
