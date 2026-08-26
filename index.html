@@ -241,9 +241,40 @@
     }
   ).addTo(map);
 
-  const jack = L.marker([38.9072, -77.0369])
-    .addTo(map)
-    .bindPopup("<b>Jack</b><br>School<br>● LIVE DEMO");
+  let jackLat = 38.9072;
+let jackLng = -77.0369;
+
+const jack = L.marker([jackLat, jackLng])
+  .addTo(map)
+  .bindPopup("<b>Jack</b><br>LIVE DEMO");
+
+const route = [
+  [38.9072, -77.0369],
+  [38.9090, -77.0355],
+  [38.9110, -77.0340],
+  [38.9130, -77.0320],
+  [38.9150, -77.0300],
+  [38.9170, -77.0280],
+  [38.9190, -77.0260],
+  [38.9210, -77.0240]
+];
+
+let position = 0;
+
+setInterval(() => {
+
+  position++;
+
+  if (position >= route.length) {
+    position = 0;
+  }
+
+  jackLat = route[position][0];
+  jackLng = route[position][1];
+
+  jack.setLatLng([jackLat, jackLng]);
+
+}, 3000);
 
   const sarah = L.marker([38.8951, -77.0364])
     .addTo(map)
