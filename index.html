@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TACNET Family</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 
   <style>
     * {
@@ -14,13 +20,13 @@
     }
 
     body {
-      background: #f4f6f8;
+      background: #eef2f5;
       color: #17212b;
     }
 
     .app {
       max-width: 430px;
-      margin: 0 auto;
+      margin: auto;
       min-height: 100vh;
       background: white;
     }
@@ -28,7 +34,7 @@
     header {
       background: #111827;
       color: white;
-      padding: 24px 20px;
+      padding: 22px 20px;
     }
 
     header h1 {
@@ -37,52 +43,52 @@
     }
 
     header p {
-      margin-top: 6px;
+      margin-top: 5px;
       color: #cbd5e1;
       font-size: 14px;
     }
 
-    .status {
-      margin: 18px;
-      padding: 15px;
-      background: #ecfdf5;
+    .network {
+      margin: 16px;
+      padding: 14px;
       border-radius: 12px;
+      background: #ecfdf5;
       border: 1px solid #a7f3d0;
     }
 
-    .status strong {
+    .network strong {
       color: #047857;
     }
 
     .section {
-      padding: 0 18px 18px;
+      padding: 0 16px 16px;
     }
 
     .section h2 {
-      font-size: 18px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      font-size: 19px;
     }
 
     .member {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 12px;
+      padding: 13px;
+      margin-bottom: 9px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
+      border-radius: 12px;
     }
 
-    .member-info {
+    .member-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 11px;
     }
 
     .avatar {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: #e5e7eb;
       display: flex;
@@ -91,14 +97,14 @@
       font-weight: bold;
     }
 
-    .member-name {
+    .name {
       font-weight: bold;
     }
 
     .location {
-      font-size: 13px;
       color: #64748b;
-      margin-top: 4px;
+      font-size: 13px;
+      margin-top: 3px;
     }
 
     .live {
@@ -107,39 +113,32 @@
       font-weight: bold;
     }
 
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 18px;
+    #map {
+      height: 330px;
+      width: calc(100% - 32px);
+      margin: 0 16px 18px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
     }
 
-    button {
-      border: none;
-      padding: 17px 10px;
-      border-radius: 12px;
-      font-size: 15px;
+    .map-title {
+      padding: 0 16px 10px;
+      font-size: 19px;
       font-weight: bold;
-      cursor: pointer;
-    }
-
-    .map-btn {
-      background: #111827;
-      color: white;
-    }
-
-    .safe-btn {
-      background: #e0f2fe;
-      color: #0369a1;
     }
 
     .sos {
-      margin: 0 18px 24px;
-      width: calc(100% - 36px);
+      display: block;
+      width: calc(100% - 32px);
+      margin: 0 16px 20px;
+      padding: 19px;
+      border: none;
+      border-radius: 13px;
       background: #dc2626;
       color: white;
       font-size: 20px;
-      padding: 20px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     footer {
@@ -160,10 +159,10 @@
     <p>Your family. One connected safety network.</p>
   </header>
 
-  <div class="status">
+  <div class="network">
     🟢 <strong>Family Network Active</strong><br>
     <span style="font-size:13px;">
-      Your family safety network is connected.
+      Family location demonstration is active.
     </span>
   </div>
 
@@ -171,10 +170,10 @@
     <h2>Your Family</h2>
 
     <div class="member">
-      <div class="member-info">
+      <div class="member-left">
         <div class="avatar">J</div>
         <div>
-          <div class="member-name">Jack</div>
+          <div class="name">Jack</div>
           <div class="location">School</div>
         </div>
       </div>
@@ -182,10 +181,10 @@
     </div>
 
     <div class="member">
-      <div class="member-info">
+      <div class="member-left">
         <div class="avatar">S</div>
         <div>
-          <div class="member-name">Sarah</div>
+          <div class="name">Sarah</div>
           <div class="location">Home</div>
         </div>
       </div>
@@ -193,10 +192,10 @@
     </div>
 
     <div class="member">
-      <div class="member-info">
+      <div class="member-left">
         <div class="avatar">M</div>
         <div>
-          <div class="member-name">Mom</div>
+          <div class="name">Mom</div>
           <div class="location">Work</div>
         </div>
       </div>
@@ -205,15 +204,11 @@
 
   </div>
 
-  <div class="buttons">
-    <button class="map-btn" onclick="showMessage('Family Live Map')">
-      🌎 Family Live Map
-    </button>
-
-    <button class="safe-btn" onclick="showMessage('Safe Zones')">
-      🏠 Safe Zones
-    </button>
+  <div class="map-title">
+    🌎 Family Live Map
   </div>
+
+  <div id="map"></div>
 
   <button class="sos" onclick="showSOS()">
     🔴 FAMILY SOS
@@ -226,18 +221,49 @@
 
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-  function showMessage(message) {
-    alert(message + " — Coming Soon");
-  }
+
+  /*
+    DEMONSTRATION ONLY
+
+    These locations are fixed demonstration coordinates.
+    They are NOT real people and NOT real-time GPS.
+  */
+
+  const map = L.map('map').setView([38.9072, -77.0369], 12);
+
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; OpenStreetMap contributors'
+    }
+  ).addTo(map);
+
+  const jack = L.marker([38.9072, -77.0369])
+    .addTo(map)
+    .bindPopup("<b>Jack</b><br>School<br>● LIVE DEMO");
+
+  const sarah = L.marker([38.8951, -77.0364])
+    .addTo(map)
+    .bindPopup("<b>Sarah</b><br>Home<br>● LIVE DEMO");
+
+  const mom = L.marker([38.9167, -77.0178])
+    .addTo(map)
+    .bindPopup("<b>Mom</b><br>Work<br>● LIVE DEMO");
+
 
   function showSOS() {
+
     alert(
-      "TACNET FAMILY SOS\n\n" +
-      "This demonstration will activate the family emergency system.\n\n" +
-      "REAL SOS functionality will be connected in a future version."
+      "🔴 TACNET FAMILY SOS\n\n" +
+      "Emergency demonstration activated.\n\n" +
+      "A future production version will send the authorized family emergency alert together with the member's current location."
     );
+
   }
+
 </script>
 
 </body>
