@@ -288,7 +288,24 @@ setInterval(() => {
   const mom = L.marker([38.9167, -77.0178])
     .addTo(map)
     .bindPopup("<b>Mom</b><br>Work<br>● LIVE DEMO");
+function focusMember(name) {
 
+  if (name === "Jack") {
+    map.setView([jackLat, jackLng], 15);
+    jack.openPopup();
+  }
+
+  if (name === "Sarah") {
+    map.setView([38.8951, -77.0364], 15);
+    sarah.openPopup();
+  }
+
+  if (name === "Mom") {
+    map.setView([38.9167, -77.0178], 15);
+    mom.openPopup();
+  }
+
+}
 
   function showSOS() {
 
