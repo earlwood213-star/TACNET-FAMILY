@@ -357,7 +357,14 @@ setInterval(() => {
   momLng = momRoute[momPosition][1];
 
   mom.setLatLng([momLat, momLng]);
+function goToJack() {
+  map.flyTo(jack.getLatLng(), 16, {
+    animate: true,
+    duration: 1.2
+  });
 
+  jack.openPopup();
+}
 }, 3000);
 function focusMember(name) {
 
