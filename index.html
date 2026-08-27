@@ -306,7 +306,24 @@ function focusMember(name) {
   }
 
 }
+function focusMember(name) {
 
+  if (name === "Jack") {
+    map.setView(jack.getLatLng(), 16);
+    jack.openPopup();
+  }
+
+  if (name === "Sarah") {
+    map.setView(sarah.getLatLng(), 16);
+    sarah.openPopup();
+  }
+
+  if (name === "Mom") {
+    map.setView(mom.getLatLng(), 16);
+    mom.openPopup();
+  }
+
+}
   function showSOS() {
 
     alert(
