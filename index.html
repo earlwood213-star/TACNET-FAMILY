@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TACNET Family - Bus Tracker</title>
+    <title>TACNET Family - Live Real-Time Bus Tracker</title>
     <style>
         /* Rich Green Base Gradient */
         body {
@@ -32,7 +32,7 @@
             border: 2px solid rgba(0, 255, 102, 0.4);
         }
 
-        /* UNDERNEATH LAYER: Interactive Route Map */
+        /* UNDERNEATH LAYER: Live Route Map */
         .bottom-layer-map {
             position: absolute;
             top: 0;
@@ -59,9 +59,21 @@
             text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
         }
 
+        .live-clock-badge {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 255, 102, 0.5);
+            color: #00FF66;
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+
         .map-graphic {
-            margin-top: 40px;
-            height: 260px;
+            margin-top: 25px;
+            height: 250px;
             border-radius: 16px;
             background: rgba(0, 40, 18, 0.4);
             border: 1px dashed rgba(0, 255, 102, 0.3);
@@ -79,8 +91,18 @@
             top: 30px;
             bottom: 30px;
             width: 4px;
+            background: rgba(0, 255, 102, 0.3);
+        }
+
+        .route-line-progress {
+            position: absolute;
+            left: 35px;
+            top: 30px;
+            height: 45%; /* Dynamic height calculated in JS */
+            width: 4px;
             background: #00FF66;
             box-shadow: 0 0 12px #00FF66;
+            transition: height 1s linear;
         }
 
         .map-stop {
@@ -102,12 +124,19 @@
         .stop-dot.active {
             background: #00FF66;
             box-shadow: 0 0 15px #00FF66;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px #00FF66; }
+            50% { transform: scale(1.3); box-shadow: 0 0 20px #00FF66; }
+            100% { transform: scale(1); box-shadow: 0 0 10px #00FF66; }
         }
 
         /* TOP LAYER: Scrollable Glass Sheet */
         .top-layer-scroll {
             position: absolute;
-            top: 320px; /* Positions glass card over the map */
+            top: 320px;
             bottom: 0;
             left: 0;
             right: 0;
@@ -119,7 +148,7 @@
 
         /* See-Through Glassmorphism Panel */
         .glass-sheet {
-            background: rgba(18, 48, 30, 0.42); /* See-thru Green-Bronze tint */
+            background: rgba(18, 48, 30, 0.42);
             backdrop-filter: blur(20px) saturate(140%);
             -webkit-backdrop-filter: blur(20px) saturate(140%);
             border: 1.5px solid rgba(0, 255, 102, 0.4);
@@ -199,18 +228,21 @@
         <div class="bottom-layer-map">
             <div class="map-header">
                 <h2>TACNET FAMILY</h2>
-                <p style="margin: 3px; color: #A3E6C5; font-size: 0.85rem;">Bus 12 &bull; Elon Rd Stop</p>
+                <div class="live-clock-badge" id="liveClock">00:00:00 AM</div>
+                <p style="margin: 5px 0 0 0; color: #A3E6C5; font-size: 0.85rem;">Bus 12 &bull; Elon Rd Stop</p>
             </div>
 
             <div class="map-graphic">
                 <div class="route-line"></div>
+                <div class="route-line-progress" id="routeProgress"></div>
+                
                 <div class="map-stop">
                     <div class="stop-dot"></div>
                     <div><strong>Depot Departure</strong><br><small style="color:#A3E6C5">Left 7:12 AM</small></div>
                 </div>
                 <div class="map-stop">
                     <div class="stop-dot active"></div>
-                    <div><strong style="color:#00FF66">Elon Rd Bus Stop</strong><br><small style="color:#FFE033">Next Stop (ETA 7:26 AM)</small></div>
+                    <div><strong style="color:#00FF66">Elon Rd Bus Stop</strong><br><small style="color:#FFE033" id="liveEtaSub">ETA 7:26 AM</small></div>
                 </div>
                 <div class="map-stop">
                     <div class="stop-dot"></div>
@@ -227,7 +259,7 @@
                 <div class="eta-time" id="etaDisplay">7:26 AM</div>
                 <div class="accuracy-badge" id="accuracyDisplay">Accuracy: &plusmn;2 min (Learned)</div>
 
-                <button class="btn-confirm" onclick="confirmArrival()">
+                <button class="btn-confirm" id="confirmBtn" onclick="confirmArrival()">
                     BUS IS HERE NOW
                 </button>
 
@@ -236,7 +268,7 @@
                     <strong style="color:#00FF66;">Live Route Intelligence</strong><br>
                     &bull; Published Schedule: 7:28 AM<br>
                     &bull; Route 29 Traffic: Clear (+0 min delay)<br>
-                    &bull; Solo Vault Mode: Learning from your taps<br><br>
+                    &bull; Status: <span id="routeStatusText" style="color:#FFE033;">Bus En Route</span><br><br>
                     <strong style="color:#FFE033;">Scroll Notice:</strong><br>
                     The background map stays pinned underneath while you scroll this translucent glass panel.
                 </div>
@@ -246,11 +278,49 @@
     </div>
 
     <script>
+        // Real-Time Ticking Clock Engine
+        function updateLiveClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // convert 0 to 12
+            
+            const timeString = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('liveClock').innerText = timeString;
+
+            // Animate route progress line based on seconds
+            const progressPercent = (now.getSeconds() / 60) * 100;
+            document.getElementById('routeProgress').style.height = `${30 + (progressPercent * 0.55)}%`;
+        }
+
+        // Run clock every 1 second
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        // One-Tap Confirmation Action
         function confirmArrival() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('etaDisplay').innerText = timeString;
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            const confirmTime = `${hours}:${minutes} ${ampm}`;
+            
+            document.getElementById('etaDisplay').innerText = confirmTime;
+            document.getElementById('liveEtaSub').innerText = `Arrived at ${confirmTime}`;
             document.getElementById('accuracyDisplay').innerText = "Confirmed by You Today";
+            document.getElementById('routeStatusText').innerHTML = "<span style='color:#00FF66;'>Bus Stop Completed ✓</span>";
+            
+            const btn = document.getElementById('confirmBtn');
+            btn.innerText = "CONFIRMED FOR TODAY ✓";
+            btn.style.background = "#FFE033";
+            btn.style.color = "#022013";
+            btn.style.boxShadow = "0 0 25px rgba(255, 224, 51, 0.6)";
         }
     </script>
 </body>
