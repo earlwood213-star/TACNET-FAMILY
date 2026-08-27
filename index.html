@@ -353,6 +353,32 @@ setInterval(() => {
 function focusMember(name) {
 
   if (name === "Jack") {
+    map.flyTo(jack.getLatLng(), 16, {
+      animate: true,
+      duration: 1.2
+    });
+    jack.openPopup();
+  }
+
+  if (name === "Sarah") {
+    map.flyTo(sarah.getLatLng(), 16, {
+      animate: true,
+      duration: 1.2
+    });
+    sarah.openPopup();
+  }
+
+  if (name === "Mom") {
+    map.flyTo(mom.getLatLng(), 16, {
+      animate: true,
+      duration: 1.2
+    });
+    mom.openPopup();
+  }
+
+}
+
+  if (name === "Jack") {
     map.setView([jackLat, jackLng], 15);
     jack.openPopup();
   }
