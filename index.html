@@ -281,9 +281,40 @@ setInterval(() => {
 
 }, 3000);
 
-  const sarah = L.marker([38.8951, -77.0364])
-    .addTo(map)
-    .bindPopup("<b>Sarah</b><br>Home<br>● LIVE DEMO");
+  let sarahLat = 38.8951;
+let sarahLng = -77.0364;
+
+const sarah = L.marker([sarahLat, sarahLng])
+  .addTo(map)
+  .bindPopup("<b>Sarah</b><br>LIVE DEMO");
+
+const sarahRoute = [
+  [38.8951, -77.0364],
+  [38.8970, -77.0345],
+  [38.8990, -77.0325],
+  [38.9010, -77.0305],
+  [38.9030, -77.0285],
+  [38.9050, -77.0265],
+  [38.9070, -77.0245],
+  [38.9090, -77.0225]
+];
+
+let sarahPosition = 0;
+
+setInterval(() => {
+
+  sarahPosition++;
+
+  if (sarahPosition >= sarahRoute.length) {
+    sarahPosition = 0;
+  }
+
+  sarahLat = sarahRoute[sarahPosition][0];
+  sarahLng = sarahRoute[sarahPosition][1];
+
+  sarah.setLatLng([sarahLat, sarahLng]);
+
+}, 3000);
 
   const mom = L.marker([38.9167, -77.0178])
     .addTo(map)
