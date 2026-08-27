@@ -316,9 +316,40 @@ setInterval(() => {
 
 }, 3000);
 
-  const mom = L.marker([38.9167, -77.0178])
-    .addTo(map)
-    .bindPopup("<b>Mom</b><br>Work<br>● LIVE DEMO");
+let momLat = 38.9167;
+let momLng = -77.0178;
+
+const mom = L.marker([momLat, momLng])
+  .addTo(map)
+  .bindPopup("<b>Mom</b><br>LIVE DEMO");
+
+const momRoute = [
+  [38.9167, -77.0178],
+  [38.9185, -77.0160],
+  [38.9200, -77.0140],
+  [38.9215, -77.0120],
+  [38.9230, -77.0100],
+  [38.9245, -77.0080],
+  [38.9260, -77.0060],
+  [38.9275, -77.0040]
+];
+
+let momPosition = 0;
+
+setInterval(() => {
+
+  momPosition++;
+
+  if (momPosition >= momRoute.length) {
+    momPosition = 0;
+  }
+
+  momLat = momRoute[momPosition][0];
+  momLng = momRoute[momPosition][1];
+
+  mom.setLatLng([momLat, momLng]);
+
+}, 3000);
 function focusMember(name) {
 
   if (name === "Jack") {
