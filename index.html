@@ -1,382 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TACNET Family</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TACNET Family - Bus Tracker</title>
+    <style>
+        /* Base Dark Background with subtle ambient glow */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0D1110;
+            background-image: radial-gradient(circle at 50% 20%, #1a2e22 0%, #0D1110 70%);
+            color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        /* Mobile Device Frame Container */
+        .app-container {
+            width: 100%;
+            max-width: 390px;
+            height: 780px;
+            box-sizing: border-box;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+        /* Header Info */
+        .header {
+            text-align: center;
+            margin-top: 10px;
+        }
 
-    body {
-      background: #eef2f5;
-      color: #17212b;
-    }
+        .header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: #00FF66;
+            text-transform: uppercase;
+        }
 
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: #fff;
-    }
+        .header p {
+            margin: 4px 0 0 0;
+            font-size: 0.85rem;
+            color: #A0AAB0;
+        }
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 22px 20px;
-    }
+        /* See-Through Frosted Glass Card */
+        .glass-card {
+            background: rgba(58, 50, 34, 0.35);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 102, 0.3);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
 
-    header h1 {
-      font-size: 27px;
-      letter-spacing: 1px;
-    }
+        .eta-label {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: #00FF66;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
 
-    header p {
-      margin-top: 5px;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
+        .eta-time {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FFE033;
+            margin: 8px 0 4px 0;
+            text-shadow: 0 0 12px rgba(255, 224, 51, 0.4);
+        }
 
-    .network {
-      margin: 16px;
-      padding: 14px;
-      border-radius: 12px;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-    }
+        .accuracy-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 255, 102, 0.1);
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #00FF66;
+            margin-bottom: 20px;
+        }
 
-    .network strong {
-      color: #047857;
-    }
+        .status-box {
+            font-size: 0.82rem;
+            color: #D1D5DB;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
 
-    .section {
-      padding: 0 16px 16px;
-    }
+        /* Cyber Lime Confirmation Button */
+        .btn-confirm {
+            background: #00FF66;
+            color: #0D1110;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+        }
 
-    .section h2 {
-      margin-bottom: 10px;
-      font-size: 19px;
-    }
+        .btn-confirm:active {
+            transform: scale(0.98);
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+        }
 
-    .member {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 13px;
-      margin-bottom: 9px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform .12s, background .12s;
-    }
+        /* Bottom Intelligence Details */
+        .intelligence-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            border-left: 3px solid #FFE033;
+            font-size: 0.78rem;
+            color: #A0AAB0;
+            line-height: 1.6;
+        }
 
-    .member:active {
-      transform: scale(.98);
-      background: #f1f5f9;
-    }
-
-    .member-left {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    .name {
-      font-weight: bold;
-    }
-
-    .location {
-      color: #64748b;
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    .live {
-      color: #059669;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .map-title {
-      padding: 0 16px 10px;
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    #map {
-      height: 330px;
-      width: calc(100% - 32px);
-      margin: 0 16px 18px;
-      border-radius: 14px;
-      border: 1px solid #d1d5db;
-      overflow: hidden;
-    }
-
-    .selected {
-      margin: 0 16px 16px;
-      padding: 14px;
-      border-radius: 12px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-    }
-
-    .selected-title {
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    .selected-detail {
-      margin-top: 5px;
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    .sos {
-      display: block;
-      width: calc(100% - 32px);
-      margin: 0 16px 20px;
-      padding: 19px;
-      border: none;
-      border-radius: 13px;
-      background: #dc2626;
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #94a3b8;
-      font-size: 12px;
-    }
-  </style>
+        .intelligence-panel strong {
+            color: #FFFFFF;
+        }
+    </style>
 </head>
-
 <body>
-<div class="app">
 
-  <header>
-    <h1>TACNET FAMILY</h1>
-    <p>Your family. One connected safety network.</p>
-  </header>
-
-  <div class="network">
-    🟢 <strong>Family Network Active</strong><br>
-    <span style="font-size:13px;">
-      Family location demonstration is active.
-    </span>
-  </div>
-
-  <div class="section">
-    <h2>Your Family</h2>
-
-    <div class="member" onclick="goToMember('Jack')">
-      <div class="member-left">
-        <div class="avatar">J</div>
-        <div>
-          <div class="name">Jack</div>
-          <div class="location">School</div>
+    <div class="app-container">
+        <!-- Top App Header -->
+        <div class="header">
+            <h2>TACNET FAMILY</h2>
+            <p>Bus 12 &bull; Elon Rd Stop</p>
         </div>
-      </div>
-      <div class="live">● LIVE</div>
-    </div>
 
-    <div class="member" onclick="goToMember('Sarah')">
-      <div class="member-left">
-        <div class="avatar">S</div>
-        <div>
-          <div class="name">Sarah</div>
-          <div class="location">Home</div>
+        <!-- Central Frosted Glass Container -->
+        <div class="glass-card">
+            <div class="eta-label">Dynamic Predicted ETA</div>
+            <div class="eta-time" id="etaDisplay">7:26 AM</div>
+            <div class="accuracy-badge" id="accuracyDisplay">Accuracy: &plusmn;2 min (Learned)</div>
+
+            <div class="status-box" id="statusBox">
+                Bus left depot at 7:12 AM.<br>Route 29 traffic is clear.
+            </div>
+
+            <!-- Tap Button -->
+            <button class="btn-confirm" onclick="confirmArrival()">
+                BUS IS HERE NOW
+            </button>
         </div>
-      </div>
-      <div class="live">● LIVE</div>
-    </div>
 
-    <div class="member" onclick="goToMember('Mom')">
-      <div class="member-left">
-        <div class="avatar">M</div>
-        <div>
-          <div class="name">Mom</div>
-          <div class="location">Work</div>
+        <!-- Route Logic Panel -->
+        <div class="intelligence-panel">
+            <strong>Route Intelligence</strong><br>
+            &bull; Scheduled Arrival: 7:28 AM<br>
+            &bull; Your 3-Day Average: 7:26 AM<br>
+            &bull; Mode: Solo Mother Vault (Learning from your taps)
         </div>
-      </div>
-      <div class="live">● LIVE</div>
     </div>
-  </div>
 
-  <div class="map-title">🌎 Family Live Map</div>
-  <div id="map"></div>
-
-  <div class="selected">
-    <div class="selected-title" id="selectedName">Select a family member</div>
-    <div class="selected-detail" id="selectedDetail">
-      Tap Jack, Sarah, or Mom above to view their current demonstration location.
-    </div>
-  </div>
-
-  <button class="sos" onclick="showSOS()">🔴 FAMILY SOS</button>
-
-  <footer>
-    TACNET Family<br>
-    Connected family safety technology
-  </footer>
-
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-  /*
-    DEMONSTRATION ONLY.
-    These are simulated locations, not real people and not real-time GPS.
-  */
-
-  const map = L.map('map').setView([38.9072, -77.0369], 12);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-
-  /* JACK */
-  let jackLat = 38.9072;
-  let jackLng = -77.0369;
-
-  const jack = L.marker([jackLat, jackLng])
-    .addTo(map)
-    .bindPopup('<b>JACK</b><br>🟢 LIVE DEMO<br>School<br>Battery: 78%');
-
-  const jackRoute = [
-    [38.9072, -77.0369],
-    [38.9090, -77.0355],
-    [38.9110, -77.0340],
-    [38.9130, -77.0320],
-    [38.9150, -77.0300],
-    [38.9170, -77.0280],
-    [38.9190, -77.0260],
-    [38.9210, -77.0240]
-  ];
-
-  let jackPosition = 0;
-
-  setInterval(() => {
-    jackPosition = (jackPosition + 1) % jackRoute.length;
-    jackLat = jackRoute[jackPosition][0];
-    jackLng = jackRoute[jackPosition][1];
-    jack.setLatLng([jackLat, jackLng]);
-  }, 3000);
-
-  /* SARAH */
-  let sarahLat = 38.8951;
-  let sarahLng = -77.0364;
-
-  const sarah = L.marker([sarahLat, sarahLng])
-    .addTo(map)
-    .bindPopup('<b>SARAH</b><br>🟢 LIVE DEMO<br>Home<br>Battery: 91%');
-
-  const sarahRoute = [
-    [38.8951, -77.0364],
-    [38.8970, -77.0345],
-    [38.8990, -77.0325],
-    [38.9010, -77.0305],
-    [38.9030, -77.0285],
-    [38.9050, -77.0265],
-    [38.9070, -77.0245],
-    [38.9090, -77.0225]
-  ];
-
-  let sarahPosition = 0;
-
-  setInterval(() => {
-    sarahPosition = (sarahPosition + 1) % sarahRoute.length;
-    sarahLat = sarahRoute[sarahPosition][0];
-    sarahLng = sarahRoute[sarahPosition][1];
-    sarah.setLatLng([sarahLat, sarahLng]);
-  }, 3000);
-
-  /* MOM */
-  let momLat = 38.9167;
-  let momLng = -77.0178;
-
-  const mom = L.marker([momLat, momLng])
-    .addTo(map)
-    .bindPopup('<b>MOM</b><br>🟢 LIVE DEMO<br>Work<br>Battery: 64%');
-
-  const momRoute = [
-    [38.9167, -77.0178],
-    [38.9185, -77.0160],
-    [38.9200, -77.0140],
-    [38.9215, -77.0120],
-    [38.9230, -77.0100],
-    [38.9245, -77.0080],
-    [38.9260, -77.0060],
-    [38.9275, -77.0040]
-  ];
-
-  let momPosition = 0;
-
-  setInterval(() => {
-    momPosition = (momPosition + 1) % momRoute.length;
-    momLat = momRoute[momPosition][0];
-    momLng = momRoute[momPosition][1];
-    mom.setLatLng([momLat, momLng]);
-  }, 3000);
-
-  /* ONE clean function handles all three cards */
-  function goToMember(name) {
-    let marker;
-
-    if (name === 'Jack') marker = jack;
-    if (name === 'Sarah') marker = sarah;
-    if (name === 'Mom') marker = mom;
-
-    if (!marker) return;
-
-    map.flyTo(marker.getLatLng(), 16, {
-      animate: true,
-      duration: 1.0
-    });
-
-    marker.openPopup();
-
-    document.getElementById('selectedName').textContent =
-      name + ' — LIVE DEMO';
-
-    document.getElementById('selectedDetail').textContent =
-      'Current simulated location • Updated just now';
-  }
-
-  function showSOS() {
-    alert(
-      '🔴 TACNET FAMILY SOS\n\n' +
-      'Emergency demonstration activated.\n\n' +
-      'This prototype does not send a real emergency alert. ' +
-      'A production version would connect the authorized family member, ' +
-      'secure location data, and emergency notification system.'
-    );
-  }
-</script>
-
+    <script>
+        function confirmArrival() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Interactive state update on tap
+            document.getElementById('etaDisplay').innerText = timeString;
+            document.getElementById('accuracyDisplay').innerText = "Confirmed by You Today";
+            document.getElementById('statusBox').innerHTML = "<span style='color:#00FF66;'>✓ Bus Arrival Logged!</span><br>Recalibrating model for tomorrow.";
+        }
+    </script>
 </body>
 </html>
