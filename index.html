@@ -246,7 +246,12 @@ let jackLng = -77.0369;
 
 const jack = L.marker([jackLat, jackLng])
   .addTo(map)
-  .bindPopup("<b>Jack</b><br>LIVE DEMO");
+  .bindPopup(`
+    <b>JACK</b><br>
+    🟢 LIVE DEMO<br>
+    Location: Moving<br>
+    Battery: 78%
+  `);
 
 const route = [
   [38.9072, -77.0369],
